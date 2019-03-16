@@ -1,4 +1,6 @@
 import React, { useState, useReducer, useEffect, useRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 
 const slideStyle = {
   display: "flex",
@@ -41,35 +43,8 @@ function reducer(state, action) {
 export default ({ images }) => {
   const [size, setSize] = useState({ height: 129, width: 229 });
 
-  function handleMouseEnter(e) {
-    const { style, firstElementChild } = e.currentTarget;
-    style.width = size.width * 1.5 + "px";
-    style.height = size.height * 1.5 + "px";
-    firstElementChild.style.width = size.width * 1.5 + "px";
-    firstElementChild.style.height = size.height * 1.5 + "px";
-  }
-
-  function handleMouseLeave(e) {
-    const { style, firstElementChild } = e.currentTarget;
-    style.width = size.width + "px";
-    style.height = size.height + "px";
-    firstElementChild.style.width = size.width + "px";
-    firstElementChild.style.height = size.height + "px";
-  }
-
   // stup images into slides
-  images = [
-    images,
-    images,
-    images,
-    images,
-    images,
-    images,
-    images,
-    images,
-    images,
-    images
-  ];
+
   images = images.map(image => (
     <img
       src={image}
@@ -79,14 +54,12 @@ export default ({ images }) => {
   ));
   const slides = images.map(image => (
     <div
-      // className='slide'
+      className="slide"
       style={{
         height: `${size.height}px`,
         width: `${size.width}px`,
         transition: "all 0.5s"
       }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
     >
       {image}
     </div>
@@ -121,7 +94,7 @@ export default ({ images }) => {
         onClick={() => dispatch({ type: "prev" })}
         disabled={state.prev}
       >
-        P
+        <FontAwesomeIcon icon={faAngleLeft} />
       </button>
       {slides}
       <button
@@ -129,7 +102,7 @@ export default ({ images }) => {
         onClick={() => dispatch({ type: "next" })}
         disabled={state.next}
       >
-        N
+        <FontAwesomeIcon icon={faAngleRight} />
       </button>
     </div>
   );
