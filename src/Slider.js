@@ -1,32 +1,12 @@
-import React, { useState, useReducer, useEffect, useRef } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import Slide from "./Slide";
 
-const slideStyle = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  overflow: "hidden",
-  height: 129 * 1.5 + "px"
-};
-
-const previousBtn = {
-  position: "absolute",
-  left: 0,
-  zIndex: 1,
-  height: "129px"
-};
-
-const nextBtn = {
-  position: "absolute",
-  zIndex: 1,
-
-  right: 0,
-  height: "129px"
-};
-
+// reducer for main state
 function reducer(state, action) {
   switch (action.type) {
+    // next & prev  remove the transition animation
     case "next":
       return {
         ...state,
@@ -39,11 +19,13 @@ function reducer(state, action) {
         translate: "0",
         transition: "none"
       };
+    //adds transition and translate onto slides
     case "translate":
       return { ...state, translate: action.payload, transition: "all 0.5s" };
-    case "slideChange":
+    //  changes current images to be in view - runs on state.images & state.translate changes
+    case "setViewImages":
       return { ...state, viewImages: action.payload };
-
+    // set all images array
     case "setImages":
       return { ...state, images: action.payload };
     default:
@@ -52,8 +34,10 @@ function reducer(state, action) {
 }
 
 export default ({ images }) => {
+  // put size into state - no changes atm
   const [size, setSize] = useState({ height: 129, width: 229 });
 
+  // setup reducer with initial state
   const [state, dispatch] = useReducer(reducer, {
     translate: "0",
     images: [],
@@ -63,13 +47,7 @@ export default ({ images }) => {
   // setup images into slides
   useEffect(() => {
     const styledImages = images.map((image, idx) => (
-      <img
-        // use es6 unique thing?
-        key={idx}
-        src={image}
-        alt="dog"
-        style={{ height: `${size.height}px`, width: `${size.width}px` }}
-      />
+      <img key={idx} src={image} alt="dog" className="image" />
     ));
 
     dispatch({ type: "setImages", payload: styledImages });
@@ -77,25 +55,30 @@ export default ({ images }) => {
 
   useEffect(() => {
     const payload = state.images.slice(0, 10);
-    dispatch({ type: "slideChange", payload });
+    dispatch({ type: "setViewImages", payload });
   }, [state.translate, state.images]);
 
   function handleClick(e) {
+    // next or prev btn
     const type = e.target.name;
-    if (type === "next") {
-      const copy = [...state.images];
-      copy.push(copy.shift());
+    // copy images - no mutation
+    const copy = [...state.images];
 
-      dispatch({ type: "translate", payload: "-229px" });
+    if (type === "next") {
+      // remove first item and place it at end
+      copy.push(copy.shift());
+      // animate slide
+      dispatch({ type: "translate", payload: `-${size.width}px` });
+      // after animation - dispatch next action & set new images
       setTimeout(() => {
         dispatch({ type: "setImages", payload: copy });
         dispatch({ type: "next" });
       }, 500);
     }
+    // refer above comments
     if (type === "prev") {
-      const copy = [...state.images];
       copy.unshift(copy.pop());
-      dispatch({ type: "translate", payload: "229px" });
+      dispatch({ type: "translate", payload: `${size.width}px` });
       setTimeout(() => {
         dispatch({ type: "setImages", payload: copy });
         dispatch({ type: "prev" });
@@ -103,28 +86,35 @@ export default ({ images }) => {
     }
   }
 
+  // create slides from images currently in view state
+  // keep styling in javascript - might add prop option
   const slides = state.viewImages.map(image => (
-    <div
-      key={"slide" + image.key}
-      className="slide"
-      style={{
-        height: `${size.height}px`,
-        width: `${size.width}px`,
-        transition: state.transition,
-        transform: `translateX(${state.translate})`
-      }}
-    >
-      {image}
-    </div>
+    <Slide
+      image={image}
+      size={size}
+      transition={state.transition}
+      translate={state.translate}
+      key={`slide-${image.key}`}
+    />
   ));
 
   return (
-    <div style={slideStyle}>
-      <button name="prev" style={previousBtn} onClick={handleClick}>
+    <div className="slider" style={{ height: size.height * 2 }}>
+      <button
+        style={{ height: size.height }}
+        className="btn btn--prev"
+        name="prev"
+        onClick={handleClick}
+      >
         <FontAwesomeIcon icon={faAngleLeft} />
       </button>
       {slides}
-      <button name="next" style={nextBtn} onClick={handleClick}>
+      <button
+        style={{ height: size.height }}
+        className="btn btn--next"
+        name="next"
+        onClick={handleClick}
+      >
         <FontAwesomeIcon icon={faAngleRight} />
       </button>
     </div>

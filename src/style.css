@@ -4,5 +4,30 @@ body {
 }
 
 .slide:hover {
-  /* transform: scale(1.5); */
+  transition: width 0.5s, height 0.5s;
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: "hidden";
+}
+
+.btn {
+  position: absolute;
+  z-index: 1;
+}
+
+.btn--prev {
+  left: 0;
+}
+
+.btn--next {
+  right: 0;
+}
+
+.image {
+  height: inherit;
+  width: inherit;
 }
