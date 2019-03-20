@@ -1,16 +1,25 @@
 import React, { useState } from "react";
 
 export default ({ size, image, transition, translate }) => {
+  // state for hover
   const [hovered, setHovered] = useState(false);
   const [hoverTransition, setTransition] = useState(false);
+  // destructure prop
   const { height, width } = size;
+  // set transition-duration
+  const animationRate = 300;
+
   return (
     <div
       className="slide"
+      // styling based on state/props
       style={{
         height: `${hovered ? height * 2 : height}px`,
         width: `${hovered ? width * 2 : width}px`,
-        transition: hoverTransition ? "width 0.5s, height 0.5s" : transition,
+        // hoverTransition separate as needs a delay to
+        transition: hoverTransition
+          ? `width ${animationRate}ms, height ${animationRate}ms`
+          : transition,
         transform: `translateX(${translate})`
       }}
       onMouseEnter={() => {
@@ -19,7 +28,7 @@ export default ({ size, image, transition, translate }) => {
       }}
       onMouseLeave={() => {
         setHovered(false);
-        setTimeout(() => setTransition(false), 500);
+        setTimeout(() => setTransition(false), animationRate);
       }}
     >
       {image}

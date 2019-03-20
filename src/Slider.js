@@ -60,7 +60,7 @@ export default ({ images }) => {
 
   function handleClick(e) {
     // next or prev btn
-    const type = e.target.name;
+    const type = e.currentTarget.name;
     // copy images - no mutation
     const copy = [...state.images];
 
