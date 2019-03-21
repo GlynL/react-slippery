@@ -1,0 +1,43 @@
+html,
+body {
+  margin: 0;
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.btn {
+  position: absolute;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  font-size: 2rem;
+  color: white;
+  width: 3rem;
+  transition: font-size 0.2s, background-color 0.2s;
+}
+
+.btn:hover,
+.btn:focus {
+  cursor: pointer;
+  font-size: 3rem;
+  background: rgba(0, 0, 0, 0.5);
+  outline: none;
+}
+
+.btn--prev {
+  left: 0;
+}
+
+.btn--next {
+  right: 0;
+}
+
+.image {
+  height: inherit;
+  width: inherit;
+}

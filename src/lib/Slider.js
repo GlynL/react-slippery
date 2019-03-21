@@ -1,7 +1,10 @@
+// https://hackernoon.com/creating-a-library-of-react-components-using-create-react-app-without-ejecting-d182df690c6b
+
 import React, { useState, useReducer, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import Slide from "./Slide";
+import "./style.css";
 
 // reducer for main state
 function reducer(state, action) {

@@ -1,5 +1,5 @@
 import React from "react";
-import Slider from "./Slider";
+import Slider from "./lib/Slider";
 import dog from "./assets/dog.jpg";
 import cat from "./assets/cat.jpg";
 
