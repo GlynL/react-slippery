@@ -28,6 +28,8 @@ function reducer(state, action) {
     // set all images array
     case "setImages":
       return { ...state, images: action.payload };
+    case "slidesAmount":
+      return { ...state, slidesAmount: action.payload };
     default:
       return state;
   }
@@ -35,13 +37,17 @@ function reducer(state, action) {
 
 export default ({ images }) => {
   // put size into state - no changes atm
-  const [size, setSize] = useState({ height: 129, width: 229 });
+  const [size, setSize] = useState({
+    height: 129,
+    width: 229
+  });
 
   // setup reducer with initial state
   const [state, dispatch] = useReducer(reducer, {
     translate: "0",
     images: [],
-    viewImages: []
+    viewImages: [],
+    slidesAmount: 10
   });
 
   // setup images into slides
@@ -50,13 +56,32 @@ export default ({ images }) => {
       <img key={idx} src={image} alt="dog" className="image" />
     ));
 
-    dispatch({ type: "setImages", payload: styledImages });
+    dispatch({
+      type: "setImages",
+      payload: styledImages
+    });
+  }, []);
+
+  // responsiveness
+  function setSlidesAmount() {
+    const mediaQuery = window.matchMedia("(max-width: 500px)");
+    const slidesAmount = mediaQuery.matches ? 5 : 10;
+    dispatch({ type: "slidesAmount", payload: slidesAmount });
+  }
+
+  useEffect(() => {
+    setSlidesAmount();
+    window.addEventListener("resize", setSlidesAmount);
+    return () => window.removeEventListener("resize", setSlidesAmount);
   }, []);
 
   useEffect(() => {
-    const payload = state.images.slice(0, 10);
-    dispatch({ type: "setViewImages", payload });
-  }, [state.translate, state.images]);
+    const payload = state.images.slice(0, state.slidesAmount);
+    dispatch({
+      type: "setViewImages",
+      payload
+    });
+  }, [state.translate, state.images, state.slidesAmount]);
 
   function handleClick(e) {
     // next or prev btn
@@ -68,20 +93,36 @@ export default ({ images }) => {
       // remove first item and place it at end
       copy.push(copy.shift());
       // animate slide
-      dispatch({ type: "translate", payload: `-${size.width}px` });
+      dispatch({
+        type: "translate",
+        payload: `-${size.width}px`
+      });
       // after animation - dispatch next action & set new images
       setTimeout(() => {
-        dispatch({ type: "setImages", payload: copy });
-        dispatch({ type: "next" });
+        dispatch({
+          type: "setImages",
+          payload: copy
+        });
+        dispatch({
+          type: "next"
+        });
       }, 500);
     }
     // refer above comments
     if (type === "prev") {
       copy.unshift(copy.pop());
-      dispatch({ type: "translate", payload: `${size.width}px` });
+      dispatch({
+        type: "translate",
+        payload: `${size.width}px`
+      });
       setTimeout(() => {
-        dispatch({ type: "setImages", payload: copy });
-        dispatch({ type: "prev" });
+        dispatch({
+          type: "setImages",
+          payload: copy
+        });
+        dispatch({
+          type: "prev"
+        });
       }, 500);
     }
   }
@@ -99,9 +140,16 @@ export default ({ images }) => {
   ));
 
   return (
-    <div className="slider" style={{ height: size.height * 2 }}>
+    <div
+      className="slider"
+      style={{
+        height: size.height * 2
+      }}
+    >
       <button
-        style={{ height: size.height }}
+        style={{
+          height: size.height
+        }}
         className="btn btn--prev"
         name="prev"
         onClick={handleClick}
@@ -110,7 +158,9 @@ export default ({ images }) => {
       </button>
       {slides}
       <button
-        style={{ height: size.height }}
+        style={{
+          height: size.height
+        }}
         className="btn btn--next"
         name="next"
         onClick={handleClick}
